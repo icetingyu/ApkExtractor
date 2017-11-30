@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    tools:background="@color/colorPrimary"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <!--<com.facebook.drawee.view.SimpleDraweeView-->
+        <!--android:id="@+id/imageView"-->
+        <!--android:layout_width="120dp"-->
+        <!--android:layout_height="90dp"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:padding="10dp"-->
+        <!--tools:src="@drawable/default_drawable"-->
+        <!--fresco:placeholderImage="@drawable/default_drawable" />-->
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/default_drawable" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_toRightOf="@id/imageView"
+        android:layout_centerVertical="true">
+        <TextView
+            android:id="@+id/title"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/text_margin"
+            android:layout_marginRight="@dimen/text_margin"
+            android:paddingTop="@dimen/text_margin"
+            android:textStyle="bold"
+            tools:text="Title"
+            style="@style/textTitle" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_below="@id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_margin"
+            tools:text="CONTENT ARE HERE FOR UI TEST"
+            style="@style/textContent" />
+    </RelativeLayout>
+</RelativeLayout>
