@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
     ArrayList<AppInfo> appInfoListAll = new ArrayList<AppInfo>();
     ArrayList<AppInfo> appInfoListInstallOnly = new ArrayList<AppInfo>();
+    ArrayList<AppInfo> data = new ArrayList<AppInfo>();
 
     private RecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         recyclerView = (RecyclerView) findViewById(R.id.list);
         recyclerView.setLayoutManager(layoutManager);
 
-        recyclerViewAdapter = new RecyclerViewAdapter(appInfoListInstallOnly, mListener);
+        recyclerViewAdapter = new RecyclerViewAdapter(data, mListener);
         recyclerView.setAdapter(recyclerViewAdapter);
 //        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
 //                layoutManager.getOrientation());
@@ -74,21 +75,17 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_system) {
             if (showAlsoSystemApp) {
                 showAlsoSystemApp = false;
                 item.setTitle(getString(R.string.show_system_app));
-                recyclerViewAdapter = new RecyclerViewAdapter(appInfoListInstallOnly, mListener);
+                recyclerViewAdapter.updateData(appInfoListInstallOnly);
             } else {
                 showAlsoSystemApp = true;
                 item.setTitle(getString(R.string.show_install_only));
-                recyclerViewAdapter = new RecyclerViewAdapter(appInfoListAll, mListener);
+                recyclerViewAdapter.updateData(appInfoListAll);
             }
-            recyclerView.setAdapter(recyclerViewAdapter);
             recyclerViewAdapter.notifyDataSetChanged();
-            recyclerView.invalidate();
-
         }
 
         return super.onOptionsItemSelected(item);
@@ -178,23 +175,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             newInfo.versionName = p.versionName;
             newInfo.versionCode = p.versionCode;
             newInfo.icon = p.applicationInfo.loadIcon(getPackageManager());
-//            Log.d("app:"+newInfo.appname + "; " +p.applicationInfo.flags + "; "+ApplicationInfo.FLAG_UPDATED_SYSTEM_APP + ": "+ApplicationInfo.FLAG_SYSTEM);
-
-            boolean isUpdateSystemApp = (p.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) > 0;
-            boolean isSystemApp = (p.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0;
-            boolean isCombine = (p.applicationInfo.flags & (ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_SYSTEM)) > 0;
-
-            Log.d(newInfo.appname +" isUpdateSystemApp: " + isUpdateSystemApp+ "; isSystemApp: "+isSystemApp +"; isCombine: "+isCombine);
-
             if((p.applicationInfo.flags & (ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_SYSTEM)) > 0) {
                 newInfo.setSystemApp(true);
             } else {
                 newInfo.setSystemApp(false);
                 appInfoListInstallOnly.add(newInfo);
             }
-            Log.d("after :"+newInfo.getSystemApp());
             appInfoListAll.add(newInfo);
         }
+        data = appInfoListInstallOnly;
     }
 
     public void onListFragmentInteraction(AppInfo item) {

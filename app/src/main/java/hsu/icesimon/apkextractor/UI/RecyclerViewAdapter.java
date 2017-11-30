@@ -1,7 +1,7 @@
 package hsu.icesimon.apkextractor.UI;
 
 /**
- * Created by simon on 2016/12/19.
+ * Created by simon on 2017/11/30.
  */
 
 import android.content.Context;
@@ -14,8 +14,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-
 import java.util.List;
 
 import hsu.icesimon.apkextractor.R;
@@ -26,11 +24,7 @@ import hsu.icesimon.apkextractor.R;
  */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private final List<AppInfo> mValues;
-    private List<AppInfo> mValues_min;
-//    private final OnListFragmentInteractionListener mListener;
-    private final int IMAGE_WITH_TEXT = 0;
-    private final int IMAGE_ONLY = 1;
+    private List<AppInfo> mValues;
     private Context mContext;
     private int margin_value;
     private int image_margin_value;
@@ -58,46 +52,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ScalingUtils.ScaleType scaleType;
-
         if (holder instanceof ImageTextViewHolder) {
             final ImageTextViewHolder viewHolder = (ImageTextViewHolder) holder;
-//            ImageRequest request;
             viewHolder.mItem = mValues.get(position);
-//            if(MainActivity.showAlsoSystemApp) {
-//                viewHolder.setupVisibility(true);
-//            } else {
-//                if (viewHolder.mItem.getSystemApp()) {
-//                    viewHolder.setupVisibility(false);
-//                } else {
-//                    viewHolder.setupVisibility(true);
-//                }
-//            }
 
             viewHolder.mImageView.setImageDrawable(viewHolder.mItem.getIcon());
-
-//            if (mValues.get(position).getIcon() != null) {
-//                Uri uri = Uri.parse(mValues.get(position).getIcon());
-//                request = ImageRequest.ImageRequestBuilder..newBuilderWithSource(uri).build();
-//                scaleType = ScalingUtils.ScaleType.CENTER_CROP;
-//            } else {
-//                request = ImageRequestBuilder.newBuilderWithResourceId(R.drawable.image_unavailable).build();
-//                scaleType = ScalingUtils.ScaleType.FIT_CENTER;
-//            }
-//            viewHolder.itemIndicator.setText(String.valueOf(position + 1));
-//
-//            GenericDraweeHierarchyBuilder builder = new GenericDraweeHierarchyBuilder(mContext.getResources());
-//            GenericDraweeHierarchy hierarchy = builder
-//                    .setActualImageScaleType(scaleType)
-//                    .build();
-//            DraweeController controller = Fresco.newDraweeControllerBuilder()
-//                    .setImageRequest(request)
-//                    .setTapToRetryEnabled(true)
-//                    .setOldController(viewHolder.mImageView.getController())
-//                    .build();
-//            viewHolder.mImageView.setController(controller);
-//            viewHolder.mImageView.setHierarchy(hierarchy);
-
             viewHolder.mTitleView.setText(mValues.get(position).getAppname());
             viewHolder.mContentView.setText(mValues.get(position).getVersionName());
 
@@ -108,33 +67,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                         // Notify the active callbacks interface (the activity, if the
                         // fragment is attached to one) that an item has been selected.
                         mListener.onListFragmentInteraction(viewHolder.mItem);
-//                        EventBus.getDefault().post(viewHolder.mItem);
                     }
                 }
             });
         }
     }
-//
-//    @Override
-//    public int getItemViewType(int position) {
-//        return mValues.get(position).getType();
-//    }
-
 
     @Override
     public int getItemCount() {
-//        int count = 0;
-//        boolean status = MainActivity.showAlsoSystemApp;
-//        if (status) {
-//            count = mValues.size();
-//        } else {
-//            for (int i = 0 ; i < mValues.size(); i++) {
-//                if (!mValues.get(i).getSystemApp()) {
-//                    count++;
-//                }
-//            }
-//        }
         return mValues.size();
+    }
+
+    public void updateData(List<AppInfo> items) {
+        mValues = items;
     }
 
     public class ImageTextViewHolder extends RecyclerView.ViewHolder {
