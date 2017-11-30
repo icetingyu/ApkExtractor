@@ -1,19 +1,18 @@
 package hsu.icesimon.apkextractor;
 
+import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,7 +26,9 @@ import hsu.icesimon.apkextractor.UI.RecyclerViewAdapter;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.OnListFragmentInteractionListener {
 
-    ArrayList<AppInfo> appInfoList = new ArrayList<AppInfo>();
+    ArrayList<AppInfo> appInfoListAll = new ArrayList<AppInfo>();
+    ArrayList<AppInfo> appInfoListInstallOnly = new ArrayList<AppInfo>();
+
     private RecyclerViewAdapter recyclerViewAdapter;
     private RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         recyclerView = (RecyclerView) findViewById(R.id.list);
         recyclerView.setLayoutManager(layoutManager);
 
-        recyclerViewAdapter = new RecyclerViewAdapter(appInfoList, mListener);
+        recyclerViewAdapter = new RecyclerViewAdapter(appInfoListInstallOnly, mListener);
         recyclerView.setAdapter(recyclerViewAdapter);
 //        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
 //                layoutManager.getOrientation());
@@ -78,11 +79,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             if (showAlsoSystemApp) {
                 showAlsoSystemApp = false;
                 item.setTitle(getString(R.string.show_system_app));
+                recyclerViewAdapter = new RecyclerViewAdapter(appInfoListInstallOnly, mListener);
             } else {
                 showAlsoSystemApp = true;
                 item.setTitle(getString(R.string.show_install_only));
+                recyclerViewAdapter = new RecyclerViewAdapter(appInfoListAll, mListener);
             }
+            recyclerView.setAdapter(recyclerViewAdapter);
             recyclerViewAdapter.notifyDataSetChanged();
+            recyclerView.invalidate();
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -113,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("installPath : " + installPath+"<<");
+        Log.d("installPath : " + installPath);
 
         adbshellCopyApk(installPath, appinfo);
     }
@@ -136,7 +142,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             }
             reader.close();
             content = output.toString();
-            Log.d("oo o o o : " + content);
+            // Copy command will return nothing.
+            if (content.length() == 0) {
+                Log.d("CP command is finished");
+            }
         } catch (IOException e) {
             Log.d("IO error: " + e.getMessage());
             e.printStackTrace();
@@ -151,12 +160,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 }
             }
         }
-        Log.d("APK be extracted: "+ new File(outputFilePath).exists());
+        String result = "APK be extracted:"+ new File(outputFilePath).exists();
+        Log.d(result);
+        Snackbar.make(getContentView(), result,
+                Snackbar.LENGTH_LONG).show();
     }
 
     private void getInstalledAPPList() {
         List<PackageInfo> apps = getPackageManager().getInstalledPackages(0);
-
+        Log.d("apps list size:"+apps.size());
         for (int i = 0; i < apps.size(); i++) {
             PackageInfo p = apps.get(i);
 
@@ -166,18 +178,57 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             newInfo.versionName = p.versionName;
             newInfo.versionCode = p.versionCode;
             newInfo.icon = p.applicationInfo.loadIcon(getPackageManager());
+//            Log.d("app:"+newInfo.appname + "; " +p.applicationInfo.flags + "; "+ApplicationInfo.FLAG_UPDATED_SYSTEM_APP + ": "+ApplicationInfo.FLAG_SYSTEM);
+
+            boolean isUpdateSystemApp = (p.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) > 0;
+            boolean isSystemApp = (p.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0;
+            boolean isCombine = (p.applicationInfo.flags & (ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_SYSTEM)) > 0;
+
+            Log.d(newInfo.appname +" isUpdateSystemApp: " + isUpdateSystemApp+ "; isSystemApp: "+isSystemApp +"; isCombine: "+isCombine);
 
             if((p.applicationInfo.flags & (ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_SYSTEM)) > 0) {
                 newInfo.setSystemApp(true);
             } else {
                 newInfo.setSystemApp(false);
+                appInfoListInstallOnly.add(newInfo);
             }
-            appInfoList.add(newInfo);
+            Log.d("after :"+newInfo.getSystemApp());
+            appInfoListAll.add(newInfo);
         }
     }
 
     public void onListFragmentInteraction(AppInfo item) {
         Log.d("AppInfo : " + item.getAppname() + ", " + item.getVersionName());
-        grabAPKpathAndCopy(item);
+        showDialog(item);
     }
+
+    private void showDialog(final AppInfo item) {
+      /*
+       *  Use android.support.v7.app.AlertDialog.Builder
+       */
+
+        final android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.dialog_title));
+        builder.setMessage(getString(R.string.dialog_message)+item.getAppname()+" apk?");
+        builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.setPositiveButton(getString(R.string.confirm), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                grabAPKpathAndCopy(item);
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    private View getContentView(){
+        return this.findViewById(android.R.id.content);
+    }
+
+
 }

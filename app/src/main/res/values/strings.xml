@@ -2,7 +2,10 @@
     <string name="app_name">ApkExtractor</string>
     <string name="show_system_app">Show System</string>
     <string name="show_install_only">Hide System</string>
-
     <string name="ic_search">Search</string>
     <string name="ic_user">User</string>
+    <string name="dialog_title">Extract APK</string>
+    <string name="dialog_message">Ready to extract \u0020</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">OK</string>
 </resources>

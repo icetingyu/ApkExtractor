@@ -5,30 +5,19 @@ package hsu.icesimon.apkextractor.UI;
  */
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.util.List;
 
-import hsu.icesimon.apkextractor.Log;
-import hsu.icesimon.apkextractor.MainActivity;
 import hsu.icesimon.apkextractor.R;
 
 /**
@@ -38,6 +27,7 @@ import hsu.icesimon.apkextractor.R;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<AppInfo> mValues;
+    private List<AppInfo> mValues_min;
 //    private final OnListFragmentInteractionListener mListener;
     private final int IMAGE_WITH_TEXT = 0;
     private final int IMAGE_ONLY = 1;
@@ -74,15 +64,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             final ImageTextViewHolder viewHolder = (ImageTextViewHolder) holder;
 //            ImageRequest request;
             viewHolder.mItem = mValues.get(position);
-            if(MainActivity.showAlsoSystemApp) {
-                viewHolder.setupVisibility(true);
-            } else {
-                if (viewHolder.mItem.getSystemApp()) {
-                    viewHolder.setupVisibility(false);
-                } else {
-                    viewHolder.setupVisibility(true);
-                }
-            }
+//            if(MainActivity.showAlsoSystemApp) {
+//                viewHolder.setupVisibility(true);
+//            } else {
+//                if (viewHolder.mItem.getSystemApp()) {
+//                    viewHolder.setupVisibility(false);
+//                } else {
+//                    viewHolder.setupVisibility(true);
+//                }
+//            }
 
             viewHolder.mImageView.setImageDrawable(viewHolder.mItem.getIcon());
 
@@ -133,20 +123,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        int count = 0;
-
-        boolean status = MainActivity.showAlsoSystemApp;
-        if (status) {
-            count = mValues.size();
-        } else {
-            for (int i = 0 ; i < mValues.size(); i++) {
-                if (!mValues.get(i).getSystemApp()) {
-                    count++;
-                }
-            }
-        }
-        Log.d("getItemCount: "+count);
-        return count;
+//        int count = 0;
+//        boolean status = MainActivity.showAlsoSystemApp;
+//        if (status) {
+//            count = mValues.size();
+//        } else {
+//            for (int i = 0 ; i < mValues.size(); i++) {
+//                if (!mValues.get(i).getSystemApp()) {
+//                    count++;
+//                }
+//            }
+//        }
+        return mValues.size();
     }
 
     public class ImageTextViewHolder extends RecyclerView.ViewHolder {
