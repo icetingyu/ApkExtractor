@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
+        toolbar = findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
         toolbar.setTitle(getString(R.string.app_name));
         toolbar.setTitleTextColor(Color.WHITE);
         toolbar.setSubtitleTextColor(Color.WHITE);
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         getInstalledAPPList();
 
         layoutManager = new LinearLayoutManager(this);
-        recyclerView = (RecyclerView) findViewById(R.id.list);
+        recyclerView = findViewById(R.id.list);
         recyclerView.setLayoutManager(layoutManager);
 
         recyclerViewAdapter = new RecyclerViewAdapter(data, mListener);
@@ -85,15 +85,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 item.setTitle(getString(R.string.show_install_only));
                 recyclerViewAdapter.updateData(appInfoListAll);
             }
-            recyclerViewAdapter.notifyDataSetChanged();
+//            recyclerViewAdapter.notifyDataSetChanged();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     private void grabAPKpathAndCopy(AppInfo appinfo) {
-        BufferedReader reader = null;
-        String content = "";
+        BufferedReader reader;
+        String content;
         String installPath = "";
         String command_grab_apk_path = "pm path "+ appinfo.getPname();
         Log.d("command_grab_apk_path : " + command_grab_apk_path);

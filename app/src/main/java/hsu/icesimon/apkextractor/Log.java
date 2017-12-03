@@ -7,7 +7,7 @@ public class Log {
 
     private static Mode sMode = Mode.AppNameWithMethod;
     private static boolean sEnabled = true;
-    private static String sAppName = "TinkLabs_Assignment";
+    private static String sAppName = "ApkExtractor";
 
     /**
      * Defines 3 kinds of tag mode
@@ -16,10 +16,10 @@ public class Log {
      * AppNameWithMethod -- The tag would be &lt;appname&gt;-&lt;classname&gt;:&lt;methodname&gt;
      *
      */
-    public static enum Mode
+    public enum Mode
     {
         AppName, AppNameWithClass, AppNameWithMethod
-    };
+    }
 
     /**
      * Enable the logger or not.
@@ -111,8 +111,8 @@ public class Log {
     @SuppressWarnings("incomplete-switch")
     private static String getTag()
     {
-        StackTraceElement[] st = null;
-        String[] caller = null;
+        StackTraceElement[] st;
+        String[] caller;
         switch (sMode)
         {
             case AppNameWithClass:

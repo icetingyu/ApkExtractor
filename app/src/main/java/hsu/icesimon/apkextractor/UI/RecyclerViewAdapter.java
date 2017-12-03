@@ -5,13 +5,12 @@ package hsu.icesimon.apkextractor.UI;
  */
 
 import android.content.Context;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -26,8 +25,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private List<AppInfo> mValues;
     private Context mContext;
-    private int margin_value;
-    private int image_margin_value;
+//    private int margin_value;
+//    private int image_margin_value;
     private final OnListFragmentInteractionListener mListener;
 
     public interface OnListFragmentInteractionListener {
@@ -43,8 +42,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         mContext = parent.getContext();
-        margin_value = (int) mContext.getResources().getDimension(R.dimen.no_margin);
-        image_margin_value = (int) mContext.getResources().getDimension(R.dimen.image_margin);
+//        margin_value = (int) mContext.getResources().getDimension(R.dimen.no_margin);
+//        image_margin_value = (int) mContext.getResources().getDimension(R.dimen.image_margin);
         view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_item, parent, false);
         return new ImageTextViewHolder(view);
@@ -78,38 +77,49 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mValues.size();
     }
 
+    // User DiffUtil for updating data.
+    // Traditional use notifyDataChanged will not trigger animation in recyclerView.
+    // But from the test. Since like DiffUtil cost a little more memory compare to simply replace the whole dataset.
+
     public void updateData(List<AppInfo> items) {
+        DiffCallBack diffCallback = new DiffCallBack(this.mValues, items);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+        diffResult.dispatchUpdatesTo(this);
+        mValues = items;
+    }
+
+    public void updateData2(List<AppInfo> items) {
         mValues = items;
     }
 
     public class ImageTextViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final ImageView mImageView;
-        public final TextView mTitleView;
-        public final TextView mContentView;
+        public View mView;
+        public ImageView mImageView;
+        public TextView mTitleView;
+        public TextView mContentView;
         public AppInfo mItem;
 
         public ImageTextViewHolder(View view) {
             super(view);
             mView = view;
-            mImageView = (ImageView) view.findViewById(R.id.imageView);
-            mTitleView = (TextView) view.findViewById(R.id.title);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mImageView = view.findViewById(R.id.imageView);
+            mTitleView = view.findViewById(R.id.title);
+            mContentView = view.findViewById(R.id.content);
         }
 
-        public void setupVisibility(boolean visible) {
-            RecyclerView.LayoutParams param = (RecyclerView.LayoutParams) itemView.getLayoutParams();
-            if (visible) {
-                param.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, mContext.getResources().getDisplayMetrics());
-                param.width = RelativeLayout.LayoutParams.MATCH_PARENT;
-                itemView.setVisibility(View.VISIBLE);
-            } else {
-                itemView.setVisibility(View.GONE);
-                param.height = 0;
-                param.width = 0;
-            }
-            itemView.setLayoutParams(param);
-        }
+//        public void setupVisibility(boolean visible) {
+//            RecyclerView.LayoutParams param = (RecyclerView.LayoutParams) itemView.getLayoutParams();
+//            if (visible) {
+//                param.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, mContext.getResources().getDisplayMetrics());
+//                param.width = RelativeLayout.LayoutParams.MATCH_PARENT;
+//                itemView.setVisibility(View.VISIBLE);
+//            } else {
+//                itemView.setVisibility(View.GONE);
+//                param.height = 0;
+//                param.width = 0;
+//            }
+//            itemView.setLayoutParams(param);
+//        }
 
         @Override
         public String toString() {

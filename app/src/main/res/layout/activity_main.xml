@@ -14,14 +14,12 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/list"
         android:layout_below="@id/tool_bar"
-        android:name="code.simon.tinklabs.Fragment.ItemFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:overScrollMode="never"
         app:layoutManager="LinearLayoutManager"
-        tools:context="code.simon.tinklabs.Fragment.ItemFragment"
         tools:listitem="@layout/fragment_item" />
 
 </RelativeLayout>
